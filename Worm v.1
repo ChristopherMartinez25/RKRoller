@@ -5,7 +5,7 @@ import time
 import shutil
 import logging
 import subprocess
-import urllib
+import webbrowser
 
 #Threading imports - AR
 from threading import Thread, Lock
@@ -157,7 +157,7 @@ class Worm:
                 os.startfile(self.own_path + RICKLOC)
                 if YOUTUBETOO:
                     for i in range(0, COUNT):
-                        urllib.urlopen('https://www.youtube.com/watch?v=dQw4w9WgXcQ')
+                        webbrowser.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ')
         except:
             logging.warning("exception occurred: no rick?")
 
