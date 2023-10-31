@@ -199,12 +199,12 @@ class Worm:
         
     def russian_roulette(self):
         num = random.randint(0, 2000)
-        with open('log.txt', 'w') as f:
-            with redirect_stdout(f):
-                print(num)
+        file1 = open("log.txt", "a")
+        file1.write("\n")
+        file1.write(num)
+        file1.close
         if ROULETTE == num:
             return True
-            #self.rick_bomb()
         else:
             return False
         
@@ -224,6 +224,7 @@ class Worm:
         #self.copy_existing_files()
         #self.time_to_rick()
         #self.connection_iterator()
+       
         
     
     
